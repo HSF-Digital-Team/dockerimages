@@ -41,7 +41,6 @@ jobs:
           context: Fluentd
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: hsf/fluentd:latest
-          labels: ${{ steps.meta.outputs.labels }}
+          tags:  ghcr.io/hsf-digital-team/fluentd:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
