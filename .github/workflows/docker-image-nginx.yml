@@ -1,4 +1,4 @@
-name: Create and publish Fluentd Docker image
+name: Create and publish nginx Docker image
 
 on:
   push:
@@ -38,9 +38,9 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
         with:
-          context: Fluentd
+          context: nginx
           platforms: linux/amd64,linux/arm64
           push: true
-          tags:  ghcr.io/hsf-digital-team/fluentd:latest
+          tags:  ghcr.io/hsf-digital-team/nginx:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
