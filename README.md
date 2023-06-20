@@ -4,5 +4,5 @@
 - Fluentd
 - varnish
 - nginx-fpm
-- infra-built-page
+- infra-built
 - maintenance-page
