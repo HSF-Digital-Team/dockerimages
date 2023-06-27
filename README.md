@@ -6,3 +6,4 @@
 - nginx-fpm
 - infra-built
 - maintenance-page
+- nginx-proxy-companion
