@@ -2,7 +2,9 @@ name: Create and publish Fluentd Docker image
 
 on:
   push:
-    branches: ['main']
+    tags:
+      - '**'
+  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io

@@ -2,8 +2,9 @@ name: Create and publish proxy companion Docker image
 
 on:
   push:
-    branches: ['main']
-
+    tags:
+      - '**'
+  workflow_dispatch:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
