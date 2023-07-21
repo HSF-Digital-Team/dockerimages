@@ -1,6 +1,5 @@
 # Docker Images used in Artifakt.io context
 
-
 - Fluentd
 - varnish
 - nginx-fpm
