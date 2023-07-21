@@ -18,7 +18,7 @@ jobs:
       matrix:
         include:
           - dockerfile: wordpress/apache-php8.1
-            image: ghcr.io/hsf-digital-team/wordpress-php8.2-apache
+            image: ghcr.io/hsf-digital-team/wordpress-php8.1-apache
           - dockerfile: wordpress/apache-php8.2
             image: ghcr.io/hsf-digital-team/wordpress-php8.2-apache
     permissions:
