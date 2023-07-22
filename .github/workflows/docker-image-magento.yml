@@ -13,6 +13,8 @@ env:
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
+    env:
+      NEWRELIC_KEY: ${{ secrets.NEWRELIC_KEY }}
     strategy:
       fail-fast: false
       matrix:
