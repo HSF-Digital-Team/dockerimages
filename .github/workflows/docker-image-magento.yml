@@ -17,7 +17,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - dockerfile: magneto/php7.4
+          - dockerfile: magento/php7.4
             image: ghcr.io/hsf-digital-team/magento-php7.4-base
 
     permissions:
