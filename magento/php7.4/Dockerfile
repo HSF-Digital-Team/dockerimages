@@ -209,4 +209,5 @@ RUN sed -i \
         -e 's/"REPLACE_WITH_REAL_KEY"/'$NEWRELIC_KEY'/' \
             /usr/local/etc/php/conf.d/newrelic.ini
 # Install qualys agent
-RUN dpkg --install ./QualysCloudAgent.deb || true
+COPY ./QualysCloudAgent.deb /tmp/QualysCloudAgent.deb
+RUN dpkg --install ./tmp/QualysCloudAgent.deb || true
