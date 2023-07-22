@@ -204,5 +204,9 @@ RUN \
   /tmp/newrelic-php5-*/newrelic-install install && \
   rm -rf /tmp/newrelic-php5-* /tmp/nrinstall*
 
+#Configure NewRelic
+RUN sed -i \
+        -e 's/"REPLACE_WITH_REAL_KEY"/'$NEWRELIC_KEY'/' \
+            /usr/local/etc/php/conf.d/newrelic.ini
 # Install qualys agent
 RUN dpkg --install ./QualysCloudAgent.deb || true
