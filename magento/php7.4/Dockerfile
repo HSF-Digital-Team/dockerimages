@@ -196,18 +196,7 @@ RUN mkdir /var/www/.nvm && chown www-data:www-data /var/www/.nvm && \
         mkdir /var/www/.npm && chown www-data:www-data /var/www/.npm && \
         mkdir /var/www/.config && chown www-data:www-data /var/www/.config
 
-#Install NewRelic
-RUN \
-  curl -L https://download.newrelic.com/php_agent/archive/${NEWRELIC_VERSION}/newrelic-php5-${NEWRELIC_VERSION}-linux.tar.gz | tar -C /tmp -zx && \
-  export NR_INSTALL_USE_CP_NOT_LN=1 && \
-  export NR_INSTALL_SILENT=1 && \
-  /tmp/newrelic-php5-*/newrelic-install install && \
-  rm -rf /tmp/newrelic-php5-* /tmp/nrinstall*
 
-#Configure NewRelic
-RUN sed -i \
-        -e 's/"REPLACE_WITH_REAL_KEY"/'$NEWRELIC_KEY'/' \
-            /usr/local/etc/php/conf.d/newrelic.ini
 # Install qualys agent
 COPY ./QualysCloudAgent.deb /tmp/QualysCloudAgent.deb
 RUN dpkg --install ./tmp/QualysCloudAgent.deb || true
