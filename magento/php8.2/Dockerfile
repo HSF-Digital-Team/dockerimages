@@ -55,6 +55,7 @@ RUN apt-get update \
   nano \
   unzip \
   htop \
+  libpcre3-dev \
   && rm -rf /var/lib/apt/lists/*
 
 # Configure the gd library
@@ -92,19 +93,16 @@ RUN docker-php-ext-install -j$(nproc) \
   sysvsem \
   sysvshm \
   tidy \
-  xmlrpc \
   xsl \
   zip \
   pcntl
 
 RUN pecl install -o -f \
-  geoip-1.1.1 \
   igbinary \
   imagick \
   mailparse \
   msgpack \
   oauth \
-  propro \
   raphf \
   redis \
   yaml
@@ -129,7 +127,6 @@ RUN docker-php-ext-enable \
   calendar \
   exif \
   gd \
-  geoip \
   gettext \
   gmp \
   igbinary \
@@ -143,7 +140,6 @@ RUN docker-php-ext-enable \
   oauth \
   opcache \
   pdo_mysql \
-  propro \
   pspell \
   raphf \
   redis \
@@ -155,7 +151,6 @@ RUN docker-php-ext-enable \
   sysvsem \
   sysvshm \
   tidy \
-  xmlrpc \
   xsl \
   yaml \
   zip \
