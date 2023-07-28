@@ -12,6 +12,7 @@ RUN set -eux; \
 	apt-get install -y --no-install-recommends \
 # Ghostscript is required for rendering PDF previews
 		ghostscript \
+  		default-mysql-client \
 	; \
 	rm -rf /var/lib/apt/lists/*
 
