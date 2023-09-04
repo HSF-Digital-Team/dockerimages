@@ -17,6 +17,8 @@ ENV DEBUG false
 ENV MAGENTO_RUN_MODE production
 ENV UPLOAD_MAX_FILESIZE 64M
 ENV PHP_EXTENSIONS bcmath bz2 calendar exif gd gettext intl mysqli opcache pdo_mysql redis soap sockets sodium sysvmsg sysvsem sysvshm xsl zip pcntl
+ENV NODE_PATH $NVM_DIR/versions/node/$NODE_VERSION/lib/node_modules
+ENV PATH      $NVM_DIR/versions/node/$NODE_VERSION/bin:$PATH
 
 # Install dependencies
 # hadolint ignore=DL3008
@@ -185,8 +187,6 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN mkdir -p $NVM_DIR
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
 RUN /bin/bash -c "source $NVM_DIR/nvm.sh && nvm install $NODE_VERSION && nvm use --delete-prefix $NODE_VERSION"
-ENV NODE_PATH $NVM_DIR/versions/node/$NODE_VERSION/lib/node_modules
-ENV PATH      $NVM_DIR/versions/node/$NODE_VERSION/bin:$PATH
 RUN mkdir /var/www/.nvm && chown www-data:www-data /var/www/.nvm && \
         mkdir /var/www/.npm && chown www-data:www-data /var/www/.npm && \
         mkdir /var/www/.config && chown www-data:www-data /var/www/.config
@@ -198,14 +198,16 @@ RUN \
   export NR_INSTALL_SILENT=1 && \
   /tmp/newrelic-php5-*/newrelic-install install && \
   rm -rf /tmp/newrelic-php5-* /tmp/nrinstall*
+
 #Load secrets
-RUN --mount=type=secret,id=NEWRELIC_APPNAME \
-   export NEWRELIC_APPNAME=$(cat /run/secrets/NEWRELIC_APPNAME)
-   
+RUN --mount=type=secret,id=$NEWRELIC_KEY \
+   export $NEWRELIC_KEY=$(cat /run/secrets/$NEWRELIC_KEY)
+
 #Configure NewRelic
 RUN sed -i \
         -e 's/"REPLACE_WITH_REAL_KEY"/'$NEWRELIC_KEY'/' \
             /usr/local/etc/php/conf.d/newrelic.ini
+
 # Install qualys agent
 COPY ./QualysCloudAgent.deb /tmp/QualysCloudAgent.deb
 RUN dpkg --install ./tmp/QualysCloudAgent.deb || true
