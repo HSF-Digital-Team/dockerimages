@@ -206,7 +206,7 @@ RUN --mount=type=secret,id=NEWRELIC_KEY \
         -e 's/"REPLACE_WITH_REAL_KEY"/'$NEWRELIC_KEY'/' \
             /usr/local/etc/php/conf.d/newrelic.ini
 
-RUN chown -R www-data:www-data /var/log/newrelic*.log
+RUN chown -R www-data:www-data /var/log/newrelic/*.log
 
 # Install qualys agent
 COPY ./QualysCloudAgent.deb /tmp/QualysCloudAgent.deb
