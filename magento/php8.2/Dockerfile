@@ -201,7 +201,7 @@ RUN \
 
 #Load secrets
 RUN --mount=type=secret,id=NEWRELIC_KEY \
-   export $NEWRELIC_KEY=$(cat /run/secrets/$NEWRELIC_KEY) && \
+   NEWRELIC_KEY=$(cat /run/secrets/NEWRELIC_KEY) && \
    sed -i \
         -e 's/"REPLACE_WITH_REAL_KEY"/'$NEWRELIC_KEY'/' \
             /usr/local/etc/php/conf.d/newrelic.ini
