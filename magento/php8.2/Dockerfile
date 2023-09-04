@@ -208,4 +208,4 @@ RUN --mount=type=secret,id=NEWRELIC_KEY \
 
 # Install qualys agent
 COPY ./QualysCloudAgent.deb /tmp/QualysCloudAgent.deb
-RUN dpkg --install ./tmp/QualysCloudAgent.deb || true
+RUN dpkg --install /tmp/QualysCloudAgent.deb || true
