@@ -44,7 +44,7 @@ RUN apt-get update \
   libyaml-dev \
   libzip-dev \
   lsof \
-  mariadb-client \
+  default-mysql-client \
   sendmail \
   sendmail-bin \
   sudo \
