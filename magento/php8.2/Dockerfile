@@ -200,7 +200,7 @@ RUN \
   rm -rf /tmp/newrelic-php5-* /tmp/nrinstall*
 
 #Load secrets
-RUN --mount=type=secret,id=$NEWRELIC_KEY \
+RUN --mount=type=secret,id=NEWRELIC_KEY \
    export $NEWRELIC_KEY=$(cat /run/secrets/$NEWRELIC_KEY)
 
 #Configure NewRelic
