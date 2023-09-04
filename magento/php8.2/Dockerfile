@@ -1,4 +1,4 @@
-ARG PHP_VERSION=8.2-fpm
+ARG PHP_VERSION=8.2-fpm-bullseye
 
 FROM php:${PHP_VERSION}
 
