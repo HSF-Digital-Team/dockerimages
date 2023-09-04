@@ -198,7 +198,10 @@ RUN \
   export NR_INSTALL_SILENT=1 && \
   /tmp/newrelic-php5-*/newrelic-install install && \
   rm -rf /tmp/newrelic-php5-* /tmp/nrinstall*
-
+#Load secrets
+RUN --mount=type=secret,id=NEWRELIC_APPNAME \
+   export NEWRELIC_APPNAME=$(cat /run/secrets/NEWRELIC_APPNAME)
+   
 #Configure NewRelic
 RUN sed -i \
         -e 's/"REPLACE_WITH_REAL_KEY"/'$NEWRELIC_KEY'/' \
