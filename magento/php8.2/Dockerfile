@@ -189,7 +189,8 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | b
 RUN /bin/bash -c "source $NVM_DIR/nvm.sh && nvm install $NODE_VERSION && nvm use --delete-prefix $NODE_VERSION"
 RUN mkdir /var/www/.nvm && chown www-data:www-data /var/www/.nvm && \
         mkdir /var/www/.npm && chown www-data:www-data /var/www/.npm && \
-        mkdir /var/www/.config && chown www-data:www-data /var/www/.config
+        mkdir /var/www/.config && chown www-data:www-data /var/www/.config && \
+        mkdir /var/www/.composer && chown www-data:www-data /var/www/.composer
 
 #Install NewRelic
 RUN \
