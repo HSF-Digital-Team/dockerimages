@@ -1,7 +1,9 @@
-FROM varnish:6.6
+FROM varnish:7.3-alpine
 
-LABEL vendor="Artifakt" \
-      author="djalal@artifakt.io" \
+ENV VARNISH_SIZE=1G
+
+LABEL vendor="HSFDigital" \
+      author="digital@henryschein.fr" \
       stage="alpha"
 
 COPY docker-varnish-entrypoint-init-conf.sh /usr/local/bin/docker-varnish-entrypoint
