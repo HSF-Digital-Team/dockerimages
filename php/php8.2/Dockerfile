@@ -1,7 +1,7 @@
 FROM php:8.2-apache-bullseye
 
-LABEL vendor="Artifakt" \
-      author="djalal@artifakt.io" \
+LABEL vendor="HSF Digital" \
+      author="digital@henryschein.fr" \
       stage="alpha"
 
 ARG PHP_EXTENSION_LIST="apcu bcmath bz2 calendar exif gd gettext iconv intl memcache mysqli opcache pcntl pdo_mysql shmop soap sockets sodium sysvmsg sysvsem sysvshm xsl zip"
@@ -35,6 +35,7 @@ RUN apt-get update \
   libzip-dev \
   wget \
   zip \
+  unzip \
   zlib1g-dev \
   default-mysql-client \
   nano \
