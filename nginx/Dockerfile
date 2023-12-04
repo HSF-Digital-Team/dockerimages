@@ -1,9 +1,8 @@
-FROM nginx:1.21-alpine
+FROM nginx:1.22-alpine
 
-LABEL vendor="Artifakt" \
-      author="djalal@artifakt.io" \
-      stage="alpha" \
-      stack="v5"
+LABEL vendor="HSFDigital" \
+  author="digital@henryschein.fr" \
+  stage="alpha"
 
 # Customization of the nginx user and group ids in the image. It's 101:101 in
 # the base image. Here we use 33 which is the user id and group id for www-data
