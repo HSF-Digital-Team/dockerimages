@@ -193,19 +193,19 @@ RUN mkdir /var/www/.nvm && chown www-data:www-data /var/www/.nvm && \
         mkdir /var/www/.composer && chown www-data:www-data /var/www/.composer
 
 #Install NewRelic
-RUN \
-  curl -L https://download.newrelic.com/php_agent/archive/${NEWRELIC_VERSION}/newrelic-php5-${NEWRELIC_VERSION}-linux.tar.gz | tar -C /tmp -zx && \
-  export NR_INSTALL_USE_CP_NOT_LN=1 && \
-  export NR_INSTALL_SILENT=1 && \
-  /tmp/newrelic-php5-*/newrelic-install install && \
-  rm -rf /tmp/newrelic-php5-* /tmp/nrinstall*
+#RUN \
+#  curl -L https://download.newrelic.com/php_agent/archive/${NEWRELIC_VERSION}/newrelic-php5-${NEWRELIC_VERSION}-linux.tar.gz | tar -C /tmp -zx && \
+#  export NR_INSTALL_USE_CP_NOT_LN=1 && \
+#  export NR_INSTALL_SILENT=1 && \
+#  /tmp/newrelic-php5-*/newrelic-install install && \
+#  rm -rf /tmp/newrelic-php5-* /tmp/nrinstall*
 
 #Load secrets
-RUN --mount=type=secret,id=NEWRELIC_KEY \
-   NEWRELIC_KEY=$(cat /run/secrets/NEWRELIC_KEY) && \
-   sed -i \
-        -e 's/"REPLACE_WITH_REAL_KEY"/'$NEWRELIC_KEY'/' \
-            /usr/local/etc/php/conf.d/newrelic.ini
+#RUN --mount=type=secret,id=NEWRELIC_KEY \
+#   NEWRELIC_KEY=$(cat /run/secrets/NEWRELIC_KEY) && \
+#   sed -i \
+#        -e 's/"REPLACE_WITH_REAL_KEY"/'$NEWRELIC_KEY'/' \
+#            /usr/local/etc/php/conf.d/newrelic.ini
 
 
 # Install qualys agent
