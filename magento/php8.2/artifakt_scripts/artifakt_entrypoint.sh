@@ -279,7 +279,6 @@ if [ "$tableCount" -ne 0 ]; then
         mkdir /shared/$ARTIFAKT_BUILD_ID
         echo "Creating sub folders"
         mkdir -p /shared/$ARTIFAKT_BUILD_ID/pub/static
-        mkdir -p /shared/$ARTIFAKT_BUILD_ID/pub/js
 
         if [ -f pub/static/.htaccess ]; then
           cp pub/static/.htaccess /shared/$ARTIFAKT_BUILD_ID/pub/static/
@@ -289,18 +288,11 @@ if [ "$tableCount" -ne 0 ]; then
         generateStatics=0
       fi
 
-      rm -rf pub/static pub/js
-
       ln -s /shared/$ARTIFAKT_BUILD_ID/pub/static pub/static
-      ln -s /shared/$ARTIFAKT_BUILD_ID/pub/js pub/js
 
       chown -h www-data:www-data pub/static
-      chown -h www-data:www-data pub/js
       chown -h www-data:www-data /data/pub/static
-      chown -h www-data:www-data /data/pub/js
-
       chown www-data:www-data -R pub/static
-      chown www-data:www-data -R pub/js
     fi
 
     ## config.php CHECKING
@@ -509,7 +501,6 @@ if [ "$tableCount" -ne 0 ]; then
       #echo "Copy all changed files from /var/www/html/pub/static/* to /data/pub/static"
       if [ -z $MAGENTO_BLOCK_JS_STATIC_SYNC ]; then
         if [ -d /var/www/html/pub/static ]; then rsync -rtv /var/www/html/pub/static/ /data/pub/static/; fi
-        if [ -d /var/www/html/pub/js ]; then rsync -rtv /var/www/html/pub/js/* /data/pub/js; fi
       fi
       echo "Copy php and js files in pub to /data/pub"
       cp /var/www/html/pub/*.php /data/pub/
