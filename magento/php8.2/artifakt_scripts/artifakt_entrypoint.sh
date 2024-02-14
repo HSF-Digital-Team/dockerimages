@@ -23,6 +23,9 @@ MAGENTO_MAP_FILE="$NGINX_CONFIG_DEST_FOLDER/custom_http.conf"
 MAGENTO_CONFIG_FILE="app/etc/config.php"
 
 ##########################################
+rm -rf /var/www/html/var/log
+mkdir -p /var/www/html/var/log
+chown www-data:www-data -R /var/www/html/var/log
 
 echo "######################################################"
 echo "##### MAGENTO OPERATIONS"
