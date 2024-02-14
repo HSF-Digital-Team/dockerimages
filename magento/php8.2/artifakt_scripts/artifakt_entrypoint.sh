@@ -224,7 +224,7 @@ if [ "$tableCount" -ne 0 ]; then
         generateStatics=0
       fi
 
-      ln -s /shared/$ARTIFAKT_BUILD_ID/pub/static /var/www/html/pub/static
+      ln -s /shared/$ARTIFAKT_BUILD_ID/pub/static /var/www/html/pub/
 
       chown -h www-data:www-data /var/www/html/pub/static
       chown -h www-data:www-data /data/pub/static
