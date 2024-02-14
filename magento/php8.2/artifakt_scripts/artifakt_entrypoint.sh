@@ -22,9 +22,6 @@ MAGENTO_CONFIG_DEST_FOLDER="$ROOT_PROJECT/app/etc"
 MAGENTO_MAP_FILE="$NGINX_CONFIG_DEST_FOLDER/custom_http.conf"
 MAGENTO_CONFIG_FILE="app/etc/config.php"
 
-MOUNT_ARTIFAKT_LOGS_FOLDER="/var/log/artifakt"
-MAGENTO_NATIVE_LOGS_FOLDER=$(pwd)"/var/log"
-MAGENTO_LOGS_NATIVE_FILES=('debug.log' 'exception.log' 'system.log')
 ##########################################
 
 echo "######################################################"
@@ -423,51 +420,6 @@ if [ "$tableCount" -ne 0 ]; then
 
     echo "Flushing magento cache (cache:flush)"
     su www-data -s /bin/bash -c "php bin/magento cache:flush"
-
-    ## LOGS SCRIPT START
-    echo ""
-    echo "######################################################"
-    echo "##### LOGS IMPLEMENTATION"
-    echo ""
-    echo "** LOGS SCRIPT START"
-
-    rm -rf "$MAGENTO_NATIVE_LOGS_FOLDER"
-    mkdir -p "$MAGENTO_NATIVE_LOGS_FOLDER"
-    mkdir -p "$MOUNT_ARTIFAKT_LOGS_FOLDER"
-
-    if [ -z "$CUSTOM_LOGS_FOLDER" ]; then CUSTOM_LOGS_FOLDER=$MAGENTO_NATIVE_LOGS_FOLDER; fi
-    chown -R www-data:www-data  "$MOUNT_ARTIFAKT_LOGS_FOLDER" "$CUSTOM_LOGS_FOLDER"
-    echo "** Mapping native magento logs"
-    for MAGENTO_LOGS_NATIVE_FILE in ${MAGENTO_LOGS_NATIVE_FILES[@]}; do
-        echo "** Mapping file: $MAGENTO_LOGS_NATIVE_FILE"
-        if [ ! -f "$MOUNT_ARTIFAKT_LOGS_FOLDER"/"$MAGENTO_LOGS_NATIVE_FILE" ]; then
-          touch "$MOUNT_ARTIFAKT_LOGS_FOLDER"/"$MAGENTO_LOGS_NATIVE_FILE"
-        fi
-        ln -sfn "$MOUNT_ARTIFAKT_LOGS_FOLDER/$MAGENTO_LOGS_NATIVE_FILE" "$CUSTOM_LOGS_FOLDER"
-        chown www-data:www-data "$MOUNT_ARTIFAKT_LOGS_FOLDER/$MAGENTO_LOGS_NATIVE_FILE" "$CUSTOM_LOGS_FOLDER/$MAGENTO_LOGS_NATIVE_FILE"
-        chown -h www-data:www-data "$CUSTOM_LOGS_FOLDER/$MAGENTO_LOGS_NATIVE_FILE"
-    done
-
-    echo "** Checking custom magento logs"
-
-    if [ -n "$MAGENTO_LOGS_CUSTOM_FILES" ]; then
-        for MAGENTO_LOGS_CUSTOM_FILE in ${MAGENTO_LOGS_CUSTOM_FILES[@]}; do
-          echo "** Mapping files: $MAGENTO_LOGS_CUSTOM_FILE"
-          if [ ! -f "$MOUNT_ARTIFAKT_LOGS_FOLDER"/"$MAGENTO_LOGS_CUSTOM_FILE" ]; then
-            touch "$MOUNT_ARTIFAKT_LOGS_FOLDER"/"$MAGENTO_LOGS_CUSTOM_FILE"
-          fi
-          ln -sfn "$MOUNT_ARTIFAKT_LOGS_FOLDER/$MAGENTO_LOGS_CUSTOM_FILE" "$CUSTOM_LOGS_FOLDER"
-          chown www-data:www-data "$MOUNT_ARTIFAKT_LOGS_FOLDER/$MAGENTO_LOGS_CUSTOM_FILE" "$CUSTOM_LOGS_FOLDER/$MAGENTO_LOGS_CUSTOM_FILE"
-          chown -h www-data:www-data "$CUSTOM_LOGS_FOLDER/$MAGENTO_LOGS_CUSTOM_FILE"
-      done
-    fi
-
-    ## LOGS SCRIPT END
-
-    echo ""
-    echo "######################################################"
-    echo "##### LOGS SCRIPT END"
-    echo ""
 
     #6 fix owner/permissions on var/{cache,di,generation,page_cache,view_preprocessed}
     echo ">> PERMISSIONS -  Fix owner/permissions on var/{cache,di,generation,page_cache,view_preprocessed}"
