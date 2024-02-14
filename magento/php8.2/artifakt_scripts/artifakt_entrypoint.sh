@@ -185,7 +185,33 @@ if [ "$tableCount" -ne 0 ]; then
     echo "##### Files mapping CONFIGURATION"
     echo ""
     chown -h www-data:www-data /var/www/html/var
+    
+    # Creates symlink to build_id release
+    generateStatics=1
+    # Executed only on new stacks
+    echo "Checks if /shared/$ARTIFAKT_BUILD_ID exists"
+    if [ -d /shared ]; then
+      if [ ! -d /shared/$ARTIFAKT_BUILD_ID ]; then
+        echo "Creating folder.."
+        mkdir /shared/$ARTIFAKT_BUILD_ID
+        echo "Creating sub folders"
+        mkdir -p /shared/$ARTIFAKT_BUILD_ID/pub/static
 
+        if [ -f pub/static/.htaccess ]; then
+          cp /var/www/html/pub/static/.htaccess /shared/$ARTIFAKT_BUILD_ID/pub/static/
+        fi
+        chown -R www-data:www-data /shared/$ARTIFAKT_BUILD_ID
+      else
+        generateStatics=0
+      fi
+      rm -rf /var/www/html/pub/static
+      ln -s /shared/$ARTIFAKT_BUILD_ID/pub/static /var/www/html/pub/
+
+      chown -h www-data:www-data /var/www/html/pub/static
+      chown -h www-data:www-data /data/pub/static
+      chown www-data:www-data -R pub/static
+    fi
+    
     for persistent_folder in ${PERSISTENT_FOLDER_LIST[@]}; do
 
       echo Init persistent folder /data/$persistent_folder
@@ -205,31 +231,7 @@ if [ "$tableCount" -ne 0 ]; then
         chown -h www-data:www-data /var/www/html/$persistent_folder
     done
 
-    # Creates symlink to build_id release
-    generateStatics=1
-    # Executed only on new stacks
-    echo "Checks if /shared/$ARTIFAKT_BUILD_ID exists"
-    if [ -d /shared ]; then
-      if [ ! -d /shared/$ARTIFAKT_BUILD_ID ]; then
-        echo "Creating folder.."
-        mkdir /shared/$ARTIFAKT_BUILD_ID
-        echo "Creating sub folders"
-        mkdir -p /shared/$ARTIFAKT_BUILD_ID/pub/static
 
-        if [ -f pub/static/.htaccess ]; then
-          cp /var/www/html/pub/static/.htaccess /shared/$ARTIFAKT_BUILD_ID/pub/static/
-        fi
-        chown -R www-data:www-data /shared/$ARTIFAKT_BUILD_ID
-      else
-        generateStatics=0
-      fi
-
-      ln -s /shared/$ARTIFAKT_BUILD_ID/pub/static /var/www/html/pub/
-
-      chown -h www-data:www-data /var/www/html/pub/static
-      chown -h www-data:www-data /data/pub/static
-      chown www-data:www-data -R pub/static
-    fi
 
     ## config.php CHECKING
     echo ""
