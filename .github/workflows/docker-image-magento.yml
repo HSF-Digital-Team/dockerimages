@@ -55,5 +55,3 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          secrets: |
-            "NEWRELIC_KEY=${{ secrets.NEWRELIC_KEY }}"   
