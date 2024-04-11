@@ -17,9 +17,9 @@ jobs:
       matrix:
         include:
           - dockerfile: varnish/6
-            image: ghcr.io/hsf-digital-team/varnish:latest
+            image: ghcr.io/hsf-digital-team/varnish
           - dockerfile: varnish/7
-            image: ghcr.io/hsf-digital-team/varnish:7
+            image: ghcr.io/hsf-digital-team/varnish7
     permissions:
       contents: read
       packages: write
