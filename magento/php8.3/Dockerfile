@@ -6,7 +6,7 @@ LABEL vendor="HSFDigital" \
   author="digital@henryschein.fr" \
   stage="alpha"
 
-ARG ARTIFAKT_COMPOSER_VERSION=2.7
+ARG ARTIFAKT_COMPOSER_VERSION=2.7.2
 ARG CODE_ROOT=.
 ENV NODE_VERSION=18.16.1
 ENV NVM_DIR /usr/local/nvm
