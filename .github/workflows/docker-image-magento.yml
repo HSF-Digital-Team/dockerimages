@@ -13,14 +13,14 @@ env:
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
-    env:
-      NEWRELIC_KEY: ${{ secrets.NEWRELIC_KEY }}
     strategy:
       fail-fast: false
       matrix:
         include:
           - dockerfile: magento/php8.2
             image: ghcr.io/hsf-digital-team/magento-php8.2-base
+          - dockerfile: magento/php8.3
+            image: ghcr.io/hsf-digital-team/magento-php8.3-base
 
     permissions:
       contents: read
