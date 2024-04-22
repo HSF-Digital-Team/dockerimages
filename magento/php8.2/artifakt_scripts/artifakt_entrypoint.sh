@@ -16,7 +16,7 @@ VARNISH_CONFIG_FILES=('custom_backends' 'custom_end_rules' 'custom_process_graph
 
 PERSISTENT_FOLDER_LIST=('pub/media' 'pub/static/_cache' 'var')
 
-MAGENTO_CONFIG_SRC_FOLDER=".artifakt/magento"
+MAGENTO_CONFIG_SRC_FOLDER="$ROOT_PROJECT/.artifakt/magento"
 MAGENTO_CONFIG_DEST_FOLDER="$ROOT_PROJECT/app/etc"
 
 MAGENTO_MAP_FILE="$NGINX_CONFIG_DEST_FOLDER/custom_http.conf"
