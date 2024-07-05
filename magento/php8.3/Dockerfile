@@ -2,8 +2,7 @@ ARG PHP_VERSION=8.3-fpm-bookworm
 
 FROM php:${PHP_VERSION} AS build
 
-ARG ARTIFAKT_COMPOSER_VERSION=2.7.2
-ENV NODE_VERSION=20.12.2
+ENV NODE_VERSION=18.16.1
 ENV NVM_DIR /usr/local/nvm
 ENV NODE_PATH $NVM_DIR/versions/node/$NODE_VERSION/lib/node_modules
 ENV PATH      $NVM_DIR/versions/node/$NODE_VERSION/bin:$PATH
@@ -48,18 +47,15 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/*
 
 # imagick extension issue with php8.3
-RUN git clone https://github.com/Imagick/imagick.git --depth 1 /tmp/imagick && \
-    cd /tmp/imagick && \
-    git fetch origin master && \
-    git switch master && \
-    cd /tmp/imagick && \
-    phpize && \
-    ./configure && \
-    make && \
-    make install && \
-    apt-get remove -y git && \
-    apt-get autoremove -y && \
-    rm -rf /var/lib/apt/lists/*
+#https://github.com/Imagick/imagick/issues/643#issuecomment-1834361716
+RUN curl -L -o /tmp/imagick.tar.gz https://github.com/Imagick/imagick/archive/7088edc353f53c4bc644573a79cdcd67a726ae16.tar.gz \
+    && tar --strip-components=1 -xf /tmp/imagick.tar.gz \
+    && phpize \
+    && ./configure \
+    && make \
+    && make install \
+    && echo "extension=imagick.so" > /usr/local/etc/php/conf.d/ext-imagick.ini \
+    && rm -rf /tmp/* \
 
 # Install required PHP extensions
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
@@ -169,7 +165,7 @@ RUN [ -n "${PHP_MEMORY_LIMIT}" ] && sed -i "s/_PHP_MEMORY_LIMIT_/${PHP_MEMORY_LI
   && [ -n "${UPLOAD_MAX_FILESIZE}" ] && sed -i "s/_UPLOAD_MAX_FILESIZE_/${UPLOAD_MAX_FILESIZE}/" /usr/local/etc/php/conf.d/zzzz-magento.ini
 
 # Install Composer
-ARG COMPOSER_VERSION=2.7.2
+ARG COMPOSER_VERSION=2.7.7
 RUN curl -sS https://getcomposer.org/installer | \
   php -- --version=${COMPOSER_VERSION} --install-dir=/usr/local/bin --filename=composer
 

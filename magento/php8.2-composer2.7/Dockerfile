@@ -1,4 +1,4 @@
-ARG PHP_VERSION=8.2-fpm-bullseye
+ARG PHP_VERSION=8.2-fpm-bookworm
 
 FROM php:${PHP_VERSION}
 
@@ -160,9 +160,6 @@ RUN docker-php-ext-enable \
 
 RUN curl -sS https://getcomposer.org/installer | \
   php -- --version=${ARTIFAKT_COMPOSER_VERSION} --install-dir=/usr/local/bin --filename=composer
-
-# hadolint ignore=DL3022
-COPY --from=mysql:8 /usr/bin/my* /usr/bin/
 
 COPY ./etc/php-fpm.ini /usr/local/etc/php/conf.d/zzzz-magento.ini
 COPY ./etc/mail.ini /usr/local/etc/php/conf.d/zzzz-mail.ini
