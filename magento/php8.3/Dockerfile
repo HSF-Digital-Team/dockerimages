@@ -3,9 +3,9 @@ ARG PHP_VERSION=8.3-fpm-bookworm
 FROM php:${PHP_VERSION} AS build
 
 ENV NODE_VERSION=18.16.1
-ENV NVM_DIR /usr/local/nvm
-ENV NODE_PATH $NVM_DIR/versions/node/$NODE_VERSION/lib/node_modules
-ENV PATH      $NVM_DIR/versions/node/$NODE_VERSION/bin:$PATH
+ENV NVM_DIR=/usr/local/nvm
+ENV NODE_PATH=$NVM_DIR/versions/node/$NODE_VERSION/lib/node_modules
+ENV PATH=$NVM_DIR/versions/node/$NODE_VERSION/bin:$PATH
 
 # Install system dependencies
 RUN apt-get update \
@@ -46,16 +46,12 @@ RUN apt-get update \
   git \
   && rm -rf /var/lib/apt/lists/*
 
-# imagick extension issue with php8.3
-#https://github.com/Imagick/imagick/issues/643#issuecomment-1834361716
-RUN curl -L -o /tmp/imagick.tar.gz https://github.com/Imagick/imagick/archive/7088edc353f53c4bc644573a79cdcd67a726ae16.tar.gz \
-    && tar --strip-components=1 -xf /tmp/imagick.tar.gz \
-    && phpize \
-    && ./configure \
-    && make \
-    && make install \
-    && echo "extension=imagick.so" > /usr/local/etc/php/conf.d/ext-imagick.ini \
-    && rm -rf /tmp/* \
+# Workaround for imagick on PHP 8.3
+# @see https://github.com/Imagick/imagick/issues/643
+# @see https://github.com/Imagick/imagick/issues/643#issuecomment-2086949716
+
+COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
+RUN install-php-extensions imagick/imagick@master
 
 # Install required PHP extensions
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
@@ -144,13 +140,12 @@ FROM php:${PHP_VERSION}
 
 ARG CODE_ROOT=.
 ENV ARTIFAKT_PHP_FPM_PORT=9000
-ENV DEBUG false
-ENV MAGENTO_RUN_MODE production
+ENV DEBUG=false
+ENV MAGENTO_RUN_MODE=production
 
 # Copy installed extensions from build stage
 COPY --from=build /usr/local/lib/php/extensions/no-debug-non-zts-* /usr/local/lib/php/extensions/no-debug-non-zts/
 COPY --from=build /usr/local/etc/php/conf.d/* /usr/local/etc/php/conf.d/
-COPY --from=mysql:8 /usr/bin/my* /usr/bin/
 
 # Copy other configuration files
 COPY ./etc/php-fpm.ini /usr/local/etc/php/conf.d/zzzz-magento.ini
