@@ -128,7 +128,7 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
 
 # Install NVM and Node.js
 RUN mkdir -p $NVM_DIR \
-  && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash \
+  && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash \
   && /bin/bash -c "source $NVM_DIR/nvm.sh && nvm install $NODE_VERSION && nvm use --delete-prefix $NODE_VERSION" \
   && mkdir -p /var/www/.nvm \
   && chown www-data:www-data /var/www/.nvm \
