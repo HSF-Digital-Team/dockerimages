@@ -41,6 +41,11 @@ if [ "$#" -eq 0 ] || [ "${1#-}" != "$1" ]; then
 	    -a http=:80,HTTP \
 	    -a proxy=:8443,PROXY \
 	    -p feature=+http2 \
+	    -p http_max_hdr=512 \
+	    -p http_req_hdr_len=16384 \
+     	    -p http_resp_hdr_len=16384 \
+	    -p workspace_backend=2M \
+ 	    -p workspace_client=2M \
 	    -s malloc,$VARNISH_SIZE \
 	    "$@"
 fi
