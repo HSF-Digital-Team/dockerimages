@@ -1,4 +1,4 @@
-ARG PHP_VERSION=8.3-fpm-bookworm
+ARG PHP_VERSION=8.3-fpm
 
 FROM php:${PHP_VERSION} AS build
 
@@ -6,6 +6,9 @@ ENV NODE_VERSION=18.16.1
 ENV NVM_DIR /usr/local/nvm
 ENV NODE_PATH $NVM_DIR/versions/node/$NODE_VERSION/lib/node_modules
 ENV PATH      $NVM_DIR/versions/node/$NODE_VERSION/bin:$PATH
+ENV PHP_EXTENSIONS bcmath bz2 calendar exif gd gettext intl mysqli opcache pdo_mysql redis soap sockets sodium sysvmsg sysvsem sysvshm xsl zip pcntl
+
+ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
 # Install system dependencies
 RUN apt-get update \
@@ -46,8 +49,6 @@ RUN apt-get update \
   git \
   && rm -rf /var/lib/apt/lists/*
 
-# imagick extension issue with php8.3
-#https://github.com/Imagick/imagick/issues/643#issuecomment-1834361716
 RUN curl -L -o /tmp/imagick.tar.gz https://github.com/Imagick/imagick/archive/7088edc353f53c4bc644573a79cdcd67a726ae16.tar.gz \
     && tar --strip-components=1 -xf /tmp/imagick.tar.gz \
     && phpize \
@@ -55,76 +56,9 @@ RUN curl -L -o /tmp/imagick.tar.gz https://github.com/Imagick/imagick/archive/70
     && make \
     && make install \
     && echo "extension=imagick.so" > /usr/local/etc/php/conf.d/ext-imagick.ini \
-    && rm -rf /tmp/* \
+    && rm -rf /tmp/*
 
-# Install required PHP extensions
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
-  && docker-php-ext-configure opcache --enable-opcache \
-  && docker-php-ext-configure zip \
-  && docker-php-ext-install -j$(nproc) \
-    bcmath \
-    bz2 \
-    calendar \
-    exif \
-    gd \
-    gettext \
-    gmp \
-    intl \
-    mysqli \
-    opcache \
-    pdo_mysql \
-    pspell \
-    shmop \
-    soap \
-    sockets \
-    sodium \
-    sysvmsg \
-    sysvsem \
-    sysvshm \
-    tidy \
-    xsl \
-    zip \
-    pcntl \
-  && pecl install -o -f \
-    igbinary \
-    mailparse \
-    msgpack \
-    oauth \
-    raphf \
-    redis \
-    yaml \
-  && docker-php-ext-enable \
-    bcmath \
-    bz2 \
-    calendar \
-    exif \
-    gd \
-    gettext \
-    gmp \
-    igbinary \
-    imagick \
-    intl \
-    mailparse \
-    msgpack \
-    mysqli \
-    oauth \
-    opcache \
-    pdo_mysql \
-    pspell \
-    raphf \
-    redis \
-    shmop \
-    soap \
-    sockets \
-    sodium \
-    sysvmsg \
-    sysvsem \
-    sysvshm \
-    tidy \
-    xsl \
-    yaml \
-    zip \
-    pcntl
+RUN install-php-extensions $PHP_EXTENSIONS
 
 # Install NVM and Node.js
 RUN mkdir -p $NVM_DIR \
@@ -139,17 +73,11 @@ RUN mkdir -p $NVM_DIR \
   && mkdir -p /var/www/.composer \
   && chown www-data:www-data /var/www/.composer
 
-# Final stage
-FROM php:${PHP_VERSION}
-
 ARG CODE_ROOT=.
 ENV ARTIFAKT_PHP_FPM_PORT=9000
 ENV DEBUG false
 ENV MAGENTO_RUN_MODE production
 
-# Copy installed extensions from build stage
-COPY --from=build /usr/local/lib/php/extensions/no-debug-non-zts-* /usr/local/lib/php/extensions/no-debug-non-zts/
-COPY --from=build /usr/local/etc/php/conf.d/* /usr/local/etc/php/conf.d/
 COPY --from=mysql:8 /usr/bin/my* /usr/bin/
 
 # Copy other configuration files
