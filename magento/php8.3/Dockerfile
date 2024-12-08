@@ -3,10 +3,10 @@ ARG PHP_VERSION=8.3-fpm
 FROM php:${PHP_VERSION} AS build
 
 ENV NODE_VERSION=18.16.1
-ENV NVM_DIR /usr/local/nvm
-ENV NODE_PATH $NVM_DIR/versions/node/$NODE_VERSION/lib/node_modules
-ENV PATH      $NVM_DIR/versions/node/$NODE_VERSION/bin:$PATH
-ENV PHP_EXTENSIONS bcmath bz2 calendar exif gd gettext intl mysqli opcache pdo_mysql redis soap sockets sodium sysvmsg sysvsem sysvshm xsl zip pcntl
+ENV NVM_DIR=/usr/local/nvm
+ENV NODE_PATH=$NVM_DIR/versions/node/$NODE_VERSION/lib/node_modules
+ENV PATH=$NVM_DIR/versions/node/$NODE_VERSION/bin:$PATH
+ENV PHP_EXTENSIONS=bcmath bz2 calendar exif gd gettext intl mysqli opcache pdo_mysql redis soap sockets sodium sysvmsg sysvsem sysvshm xsl zip pcntl
 
 ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
@@ -75,8 +75,8 @@ RUN mkdir -p $NVM_DIR \
 
 ARG CODE_ROOT=.
 ENV ARTIFAKT_PHP_FPM_PORT=9000
-ENV DEBUG false
-ENV MAGENTO_RUN_MODE production
+ENV DEBUG=false
+ENV MAGENTO_RUN_MODE=production
 
 COPY --from=mysql:8 /usr/bin/my* /usr/bin/
 
@@ -87,8 +87,8 @@ COPY ./etc/opcache.exclusion /usr/local/etc/php/opcache.exclusion
 COPY ./etc/php-fpm.conf /usr/local/etc/
 
 # Substitute in php.ini values
-ENV PHP_MEMORY_LIMIT 4G
-ENV UPLOAD_MAX_FILESIZE 64M
+ENV PHP_MEMORY_LIMIT=4G
+ENV UPLOAD_MAX_FILESIZE=64M
 RUN [ -n "${PHP_MEMORY_LIMIT}" ] && sed -i "s/_PHP_MEMORY_LIMIT_/${PHP_MEMORY_LIMIT}/" /usr/local/etc/php/conf.d/zzzz-magento.ini \
   && [ -n "${UPLOAD_MAX_FILESIZE}" ] && sed -i "s/_UPLOAD_MAX_FILESIZE_/${UPLOAD_MAX_FILESIZE}/" /usr/local/etc/php/conf.d/zzzz-magento.ini
 
