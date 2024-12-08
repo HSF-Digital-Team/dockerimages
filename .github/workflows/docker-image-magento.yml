@@ -17,8 +17,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - dockerfile: magento/php8.2
-            image: ghcr.io/hsf-digital-team/magento-php8.2-base
           - dockerfile: magento/php8.2-composer2.7
             image: ghcr.io/hsf-digital-team/php8.2-composer2.7-base
           - dockerfile: magento/php8.3
