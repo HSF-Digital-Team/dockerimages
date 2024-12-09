@@ -2,13 +2,18 @@ ARG PHP_VERSION=8.3-fpm
 
 FROM php:${PHP_VERSION} AS build
 
+ARG COMPOSER_VERSION=2.7.7
+ARG CODE_ROOT=.
 ENV NODE_VERSION=18.16.1
 ENV NVM_DIR=/usr/local/nvm
-ENV NODE_PATH=$NVM_DIR/versions/node/$NODE_VERSION/lib/node_modules
-ENV PATH=$NVM_DIR/versions/node/$NODE_VERSION/bin:$PATH
-ENV PHP_EXTENSIONS=bcmath bz2 calendar exif gd gettext intl mysqli opcache pdo_mysql redis soap sockets sodium sysvmsg sysvsem sysvshm xsl zip pcntl
-
-ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+ENV ARTIFAKT_PHP_FPM_PORT=9000
+ENV PHP_MEMORY_LIMIT=4G
+ENV DEBUG=false
+ENV MAGENTO_RUN_MODE=production
+ENV UPLOAD_MAX_FILESIZE=64M
+ENV PHP_EXTENSIONS="bcmath bz2 calendar exif gd gettext intl mysqli opcache pdo_mysql redis soap sockets sodium sysvmsg sysvsem sysvshm xsl zip pcntl apcu"
+ENV NODE_PATH="$NVM_DIR/versions/node/$NODE_VERSION/lib/node_modules"
+ENV PATH="$NVM_DIR/versions/node/$NODE_VERSION/bin:$PATH"
 
 # Install system dependencies
 RUN apt-get update \
@@ -49,6 +54,7 @@ RUN apt-get update \
   git \
   && rm -rf /var/lib/apt/lists/*
 
+# Install Imagick
 RUN curl -L -o /tmp/imagick.tar.gz https://github.com/Imagick/imagick/archive/7088edc353f53c4bc644573a79cdcd67a726ae16.tar.gz \
     && tar --strip-components=1 -xf /tmp/imagick.tar.gz \
     && phpize \
@@ -58,7 +64,26 @@ RUN curl -L -o /tmp/imagick.tar.gz https://github.com/Imagick/imagick/archive/70
     && echo "extension=imagick.so" > /usr/local/etc/php/conf.d/ext-imagick.ini \
     && rm -rf /tmp/*
 
+# Install PHP extensions
+ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp
 RUN install-php-extensions $PHP_EXTENSIONS
+
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | \
+  php -- --version=${COMPOSER_VERSION} --install-dir=/usr/local/bin --filename=composer
+  
+# Copy other configuration files
+COPY ./etc/php-fpm.ini /usr/local/etc/php/conf.d/zzzz-magento.ini
+COPY ./etc/mail.ini /usr/local/etc/php/conf.d/zzzz-mail.ini
+COPY ./etc/opcache.exclusion /usr/local/etc/php/opcache.exclusion
+COPY ./etc/php-fpm.conf /usr/local/etc/
+
+# Substitute in php.ini values
+ENV PHP_MEMORY_LIMIT=4G
+ENV UPLOAD_MAX_FILESIZE=64M
+RUN [ -n "${PHP_MEMORY_LIMIT}" ] && sed -i "s/_PHP_MEMORY_LIMIT_/${PHP_MEMORY_LIMIT}/" /usr/local/etc/php/conf.d/zzzz-magento.ini \
+  && [ -n "${UPLOAD_MAX_FILESIZE}" ] && sed -i "s/_UPLOAD_MAX_FILESIZE_/${UPLOAD_MAX_FILESIZE}/" /usr/local/etc/php/conf.d/zzzz-magento.ini
 
 # Install NVM and Node.js
 RUN mkdir -p $NVM_DIR \
@@ -72,30 +97,6 @@ RUN mkdir -p $NVM_DIR \
   && chown www-data:www-data /var/www/.config \
   && mkdir -p /var/www/.composer \
   && chown www-data:www-data /var/www/.composer
-
-ARG CODE_ROOT=.
-ENV ARTIFAKT_PHP_FPM_PORT=9000
-ENV DEBUG=false
-ENV MAGENTO_RUN_MODE=production
-
-COPY --from=mysql:8 /usr/bin/my* /usr/bin/
-
-# Copy other configuration files
-COPY ./etc/php-fpm.ini /usr/local/etc/php/conf.d/zzzz-magento.ini
-COPY ./etc/mail.ini /usr/local/etc/php/conf.d/zzzz-mail.ini
-COPY ./etc/opcache.exclusion /usr/local/etc/php/opcache.exclusion
-COPY ./etc/php-fpm.conf /usr/local/etc/
-
-# Substitute in php.ini values
-ENV PHP_MEMORY_LIMIT=4G
-ENV UPLOAD_MAX_FILESIZE=64M
-RUN [ -n "${PHP_MEMORY_LIMIT}" ] && sed -i "s/_PHP_MEMORY_LIMIT_/${PHP_MEMORY_LIMIT}/" /usr/local/etc/php/conf.d/zzzz-magento.ini \
-  && [ -n "${UPLOAD_MAX_FILESIZE}" ] && sed -i "s/_UPLOAD_MAX_FILESIZE_/${UPLOAD_MAX_FILESIZE}/" /usr/local/etc/php/conf.d/zzzz-magento.ini
-
-# Install Composer
-ARG COMPOSER_VERSION=2.7.7
-RUN curl -sS https://getcomposer.org/installer | \
-  php -- --version=${COMPOSER_VERSION} --install-dir=/usr/local/bin --filename=composer
 
 # Install Qualys agent
 COPY ./QualysCloudAgent.deb /tmp/QualysCloudAgent.deb
