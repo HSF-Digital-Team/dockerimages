@@ -1,4 +1,4 @@
-FROM nginx:1.21-alpine
+FROM nginx:1.26-alpine
 
 LABEL vendor="Artifakt" \
       author="djalal@artifakt.io" \
