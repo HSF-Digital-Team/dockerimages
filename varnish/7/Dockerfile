@@ -1,4 +1,4 @@
-FROM varnish:7.4
+FROM varnish:7.6
 
 LABEL vendor="HSFDigital" \
       author="digital@henryschein.fr" \
